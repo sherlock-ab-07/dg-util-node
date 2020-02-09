@@ -1,25 +1,18 @@
-const { statusCodes } = require('../constants/status-message.constants');
-
-const fennixResponse = (status, language, data) => {
+const createResponse = (status, msg, data) => {
   let returnObj = {};
   if (typeof status !== 'number') {
     throw new Error('status must be a number');
   } else {
-    returnObj = {
-      responseStatus: status,
-      userMessage: statusCodes[status]['userMsg'][language],
-      devMessage: statusCodes[status]['devMsg'],
-      responseData: data,
-    };
+    returnObj = { status, msg, data };
   }
   return returnObj;
 };
 
-const dropdownCreator = (dropdownKey, dropdownValue, isDisabledFlag) => {
+const createDropdown = (dropdownKey, dropdownValue, isDisabledFlag) => {
   dropdownKey, dropdownValue, isDisabledFlag;
 };
 
-const dropdownActionButtonCreator = dropActBtn => {
+const createActionBtn = dropActBtn => {
   let dropdownAction = {
     dropdownSetId: dropActBtn['dropdown_set_id'],
     dropdownKey: dropActBtn['dropdown_key'],
@@ -48,7 +41,7 @@ const dropdownActionButtonCreator = dropActBtn => {
 };
 
 module.exports = {
-  fennixResponse,
-  dropdownCreator,
-  dropdownActionButtonCreator,
+  createResponse,
+  createDropdown,
+  createActionBtn,
 };
