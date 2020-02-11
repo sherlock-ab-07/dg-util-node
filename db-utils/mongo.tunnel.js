@@ -1,7 +1,7 @@
 // Tunnel to connect via SSH for mongo DB
 const tunnel = require('tunnel-ssh');
 const mongoose = require('mongoose');
-const { init, error, success } = require('../util/color.log');
+const { initLog, error, success } = require('../util/color.log');
 
 mongoose.Promise = global.Promise;
 
@@ -20,7 +20,7 @@ const init = () => {
       console.error(err);
       throw new Error('SSH is not working');
     }
-    init('connected to SHH');
+    initLog('connected to SHH');
     //TODO : Mongo URL
     mongoose
       .connect('localhost:27017')

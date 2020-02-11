@@ -1,7 +1,7 @@
 const express = require('express');
 const http = require('http');
 const io = require('socket.io');
-const { initlog, device_data } = require('./color.log');
+const { initlog, device_data } = require('../util/color.log');
 
 const _startServer = () => {
   const socketExpress = express();

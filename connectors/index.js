@@ -1,13 +1,9 @@
 const fleet = require('./fleet.socket');
-const ship = require('./fleet.socket');
-const mongo = require('./fleet.socket');
-const justice = require('./fleet.socket');
-const colorlog = require('./color.log');
+const ship = require('./ship.socket');
+const justice = require('./justice.socket');
 
 module.exports = {
   fleet,
   ship,
-  mongo,
   justice,
-  colorlog,
 };
