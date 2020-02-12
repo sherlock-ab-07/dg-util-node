@@ -1,8 +1,13 @@
+const { Pool } = require('pg');
 const {
   isNotNull,
   isArrNotEmpty,
+  isNotNullAndEmpty,
   doesObjHavProp,
 } = require('../data-transform/data.validator');
+const { progress } = require('../util/color.log');
+const { postgresSofiaDev } = require('../constants/connection.constant');
+const pool = new Pool(postgresSofiaDev);
 
 const meataFilterQueryCreator = (filterQuery, colName) => {
   filterQuery = filterQuery.replace(
@@ -108,7 +113,20 @@ const pgDataFilterQueryCreator = (keyArray, valueArray) => {
   return filterQuery;
 };
 
+const pgQueryExec = async (req, query) => {
+  let returnQuery;
+  const start = Date.now();
+  if (isNotNullAndEmpty(query)) {
+    req = isNotNullAndEmpty(req) ? req : [];
+    returnQuery = await pool.query(query, req);
+    const duration = Date.now() - start;
+    progress(`query  took : ${duration}`);
+  }
+  return returnQuery;
+};
+
 module.exports = {
+  pgQueryExec,
   meataFilterQueryCreator,
   pgRowExtractor,
   insertQueryCreator,
