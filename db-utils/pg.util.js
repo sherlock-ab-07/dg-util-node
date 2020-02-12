@@ -5,21 +5,32 @@ const {
   isNotNullAndEmpty,
   doesObjHavProp,
 } = require('../data-transform/data.validator');
-const { progress } = require('../util/color.log');
+const {
+  ROWS,
+  STATUS_PG_ERR,
+  STATUS_OK,
+  STATUS_EMPTY,
+} = require('../constants');
+const { progress, error } = require('../util/color.log');
 const { postgresSofiaDev } = require('../constants/connection.constant');
 const pool = new Pool(postgresSofiaDev);
 
-const meataFilterQueryCreator = (filterQuery, colName) => {
+const metaFilterQueryCreator = (filterQuery, colName) => {
   filterQuery = filterQuery.replace(
     '{0}',
     `fs.${dbTableColMap['filterset'][colName]}`,
   );
   return filterQuery;
 };
-const pgRowExtractor = result =>
-  doesObjHavProp(result, 'rows') && isArrNotEmpty(result.rows)
-    ? isArrNotEmpty(result.rows)
-    : null;
+const pgRowExtractor = result => {
+  const { data, status } = result;
+  return status === STATUS_OK && doesObjHavProp(data, ROWS)
+    ? {
+        status: isArrNotEmpty(data.rows) ? status : STATUS_EMPTY,
+        data: data.rows,
+      }
+    : result;
+};
 
 const insertQueryCreator = (req, tableName, insertQuery) => {
   let columns = '',
@@ -116,18 +127,25 @@ const pgDataFilterQueryCreator = (keyArray, valueArray) => {
 const pgQueryExec = async (req, query) => {
   let returnQuery;
   const start = Date.now();
-  if (isNotNullAndEmpty(query)) {
-    req = isNotNullAndEmpty(req) ? req : [];
-    returnQuery = await pool.query(query, req);
+  try {
+    if (isNotNullAndEmpty(query)) {
+      req = isNotNullAndEmpty(req) ? req : [];
+      returnQuery = await pool.query(query, req);
+      const duration = Date.now() - start;
+      progress(`query  took : ${duration}`);
+    }
+    return { status: STATUS_OK, data: returnQuery };
+  } catch (err) {
     const duration = Date.now() - start;
-    progress(`query  took : ${duration}`);
+    //TODO : Add logging.
+    error(`query failed after: ${duration} with the following error : ${err}`);
+    return { status: STATUS_PG_ERR, data: null };
   }
-  return returnQuery;
 };
 
 module.exports = {
   pgQueryExec,
-  meataFilterQueryCreator,
+  metaFilterQueryCreator,
   pgRowExtractor,
   insertQueryCreator,
   updateQueryCreator,

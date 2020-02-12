@@ -1,3 +1,10 @@
+/**
+ *
+ * @param {number} status
+ * @param {string} msg
+ * @param {*} data
+ * @returns {Object|null} returnObj
+ */
 const createResponse = (status, msg, data) => {
   let returnObj = {};
   if (typeof status !== 'number') {

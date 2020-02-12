@@ -5,9 +5,9 @@ const dataTransforms = require('./data-transform');
 const transforms = require('./transform');
 const dbUtils = require('./db-utils');
 
-const constants = require('./constants');
+const CONSTANTS = require('./constants');
 module.exports = {
-  constants,
+  CONSTANTS,
   dbUtils,
   utils,
   connectors,
